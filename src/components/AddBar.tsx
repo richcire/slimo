@@ -4,16 +4,22 @@ import update from "immutability-helper";
 import { useRecoilState } from "recoil";
 import { memoStorageState } from "../atoms";
 import { v4 as uuidv4 } from "uuid";
+import { IoAdd } from "react-icons/io5";
+import { motion } from "framer-motion";
 
-const AddBarContainer = styled.form`
+const AddBarContainer = styled(motion.form)`
   margin: 0 auto;
-  background-color: beige;
+  background-color: whitesmoke;
   width: 100%;
   max-width: 860px;
   height: 80px;
   display: flex;
   margin-top: 5%;
   border-radius: 20px;
+  align-items: center;
+  padding-left: 20px;
+  gap: 20px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
 `;
 
 const AddBarInput = styled.input`
@@ -21,6 +27,12 @@ const AddBarInput = styled.input`
   background-color: transparent;
   width: 100%;
   height: 100%;
+  outline: none;
+  font-size: 3em;
+
+  /* :focus {
+    outline: none;
+  } */
 `;
 
 function AddBar() {
@@ -43,7 +55,8 @@ function AddBar() {
   };
 
   return (
-    <AddBarContainer onSubmit={handleSubmit}>
+    <AddBarContainer onSubmit={handleSubmit} whileHover={{ scale: 1.1 }}>
+      <IoAdd size="3em" />
       <AddBarInput
         type="text"
         value={inputText}
