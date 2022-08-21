@@ -4,10 +4,23 @@ import styled from "styled-components";
 import { memoStorageState } from "../atoms";
 import update from "immutability-helper";
 const BoardContainer = styled.ul`
-  background-color: aliceblue;
+  background-color: rgba(44, 62, 80, 0.9);
   width: 30%;
+  color: #ecf0f1;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
 `;
-const Label = styled(motion.li)``;
+
+const Label = styled(motion.li)`
+  width: 90%;
+  height: 40px;
+  background-color: rgba(88, 118, 147, 1);
+  list-style-type: none;
+  margin-top: 20px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+`;
 
 interface IBoard {
   boardType: "todo" | "finished" | "willdo";
@@ -74,9 +87,7 @@ function Board({ boardType }: IBoard) {
         <Label
           key={memo?.id}
           drag="x"
-          whileDrag={{ scale: 1.2 }}
           dragConstraints={{ left: 0, right: 0 }}
-          // onDrag={(event, info) => console.log(info.offset.x)}
           onDragEnd={(event, info) =>
             boardType === "finished"
               ? finishedMoved(info.offset.x, memo?.id!)
