@@ -1,9 +1,10 @@
-import { motion, useAnimationControls } from "framer-motion";
+import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { memoStorageState } from "../atoms";
 import update from "immutability-helper";
-import { useEffect } from "react";
+import { FiDelete } from "react-icons/fi";
+
 const BoardContainer = styled.ul`
   background-color: rgba(44, 62, 80, 0.9);
   width: 30%;
@@ -14,6 +15,7 @@ const BoardContainer = styled.ul`
 `;
 
 const Label = styled(motion.li)`
+  position: relative;
   width: 90%;
   height: 40px;
   background-color: rgba(88, 118, 147, 1);
@@ -22,6 +24,15 @@ const Label = styled(motion.li)`
   align-items: center;
   display: flex;
   justify-content: center;
+`;
+
+const DeleteBtn = styled(motion.button)`
+  background-color: transparent;
+  border: none;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  color: red;
 `;
 
 interface IBoard {
@@ -91,27 +102,80 @@ function Board({ boardType }: IBoard) {
     }
   };
 
+  const onDeleteBtnClicked = (memoId: string, boardType: string) => {
+    let draggedMemoIndex = -1;
+    if (boardType === "finished") {
+      draggedMemoIndex = memoStorage.finished.findIndex(
+        (memo) => memo?.id === memoId
+      );
+      if (draggedMemoIndex >= 0) {
+        setMemoStorage(() => {
+          const newMemoStorage = update(memoStorage, {
+            finished: { $splice: [[draggedMemoIndex, 1]] },
+          });
+          myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+          return newMemoStorage;
+        });
+      }
+    } else if (boardType === "todo") {
+      draggedMemoIndex = memoStorage.todo.findIndex(
+        (memo) => memo?.id === memoId
+      );
+      if (draggedMemoIndex >= 0) {
+        setMemoStorage(() => {
+          const newMemoStorage = update(memoStorage, {
+            todo: { $splice: [[draggedMemoIndex, 1]] },
+          });
+          myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+          return newMemoStorage;
+        });
+      }
+    } else {
+      draggedMemoIndex = memoStorage.willdo.findIndex(
+        (memo) => memo?.id === memoId
+      );
+      if (draggedMemoIndex >= 0) {
+        setMemoStorage(() => {
+          const newMemoStorage = update(memoStorage, {
+            willdo: { $splice: [[draggedMemoIndex, 1]] },
+          });
+          myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+          return newMemoStorage;
+        });
+      }
+    }
+  };
   // console.log(memoStorage);
   return (
     <BoardContainer>
       {memoStorage[boardType].map((memo) => (
-        <Label
-          key={memo?.id}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          onDragEnd={(event, info) =>
-            boardType === "finished"
-              ? finishedMoved(info.offset.x, memo?.id!)
-              : boardType === "todo"
-              ? todoMoved(info.offset.x, memo?.id!)
-              : willdoMoved(info.offset.x, memo?.id!)
-          }
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {memo?.text}
-        </Label>
+        <AnimatePresence>
+          <Label
+            key={memo?.id}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            onDragEnd={(event, info) =>
+              boardType === "finished"
+                ? finishedMoved(info.offset.x, memo?.id!)
+                : boardType === "todo"
+                ? todoMoved(info.offset.x, memo?.id!)
+                : willdoMoved(info.offset.x, memo?.id!)
+            }
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.1, transition: { duration: 0.1 } }}
+          >
+            {memo?.text}
+            <DeleteBtn
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+              onClick={() => onDeleteBtnClicked(memo?.id!, boardType)}
+            >
+              <FiDelete size="1.3em" />
+            </DeleteBtn>
+          </Label>
+        </AnimatePresence>
       ))}
     </BoardContainer>
   );
