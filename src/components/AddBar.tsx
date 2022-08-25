@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import update from "immutability-helper";
 import { useRecoilState } from "recoil";
@@ -29,30 +29,39 @@ const AddBarInput = styled.input`
   height: 100%;
   outline: none;
   font-size: 3em;
-
-  /* :focus {
-    outline: none;
-  } */
 `;
 
 function AddBar() {
   const [inputText, setInputText] = useState<string>("");
   const [memoStorage, setMemoStorage] = useRecoilState(memoStorageState);
+  const myStorage = window.localStorage;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMemoStorage(
-      update(memoStorage, {
+    setMemoStorage(() => {
+      const newMemoStorage = update(memoStorage, {
         todo: { $push: [{ id: uuidv4(), text: inputText }] },
-      })
-    );
+      });
+      myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+      return newMemoStorage;
+    });
+
     setInputText("");
+
+    // localStorage.setItem("memoStorage", JSON.stringify(memoStorage));
   };
 
   const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
     event.preventDefault();
     setInputText(event.currentTarget.value);
   };
+
+  useEffect(() => {
+    const localStorageData = myStorage.getItem("memoStorage");
+    if (localStorageData) {
+      setMemoStorage(JSON.parse(localStorageData));
+    }
+  }, []);
 
   return (
     <AddBarContainer onSubmit={handleSubmit} whileHover={{ scale: 1.1 }}>

@@ -1,14 +1,16 @@
-import { motion } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { memoStorageState } from "../atoms";
 import update from "immutability-helper";
+import { useEffect } from "react";
 const BoardContainer = styled.ul`
   background-color: rgba(44, 62, 80, 0.9);
   width: 30%;
   color: #ecf0f1;
   border-radius: 10px;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+  overflow: scroll;
 `;
 
 const Label = styled(motion.li)`
@@ -27,18 +29,21 @@ interface IBoard {
 }
 function Board({ boardType }: IBoard) {
   const [memoStorage, setMemoStorage] = useRecoilState(memoStorageState);
+  const myStorage = window.localStorage;
 
   const finishedMoved = (offsetMoved: number, memoId: string) => {
     const draggedMemoIndex = memoStorage.finished.findIndex(
       (memo) => memo?.id === memoId
     );
     if (offsetMoved > 200) {
-      setMemoStorage(
-        update(memoStorage, {
+      setMemoStorage(() => {
+        const newMemoStorage = update(memoStorage, {
           finished: { $splice: [[draggedMemoIndex, 1]] },
           todo: { $push: [memoStorage.finished[draggedMemoIndex]] },
-        })
-      );
+        });
+        myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+        return newMemoStorage;
+      });
     }
   };
   const todoMoved = (offsetMoved: number, memoId: string) => {
@@ -49,20 +54,24 @@ function Board({ boardType }: IBoard) {
     if (draggedMemoIndex < 0) return;
 
     if (offsetMoved > 200) {
-      setMemoStorage(
-        update(memoStorage, {
+      setMemoStorage(() => {
+        const newMemoStorage = update(memoStorage, {
           todo: { $splice: [[draggedMemoIndex, 1]] },
           willdo: { $push: [memoStorage.todo[draggedMemoIndex]] },
-        })
-      );
+        });
+        myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+        return newMemoStorage;
+      });
     } else if (offsetMoved < -100) {
       console.log(memoStorage);
-      setMemoStorage(
-        update(memoStorage, {
+      setMemoStorage(() => {
+        const newMemoStorage = update(memoStorage, {
           todo: { $splice: [[draggedMemoIndex, 1]] },
           finished: { $push: [memoStorage.todo[draggedMemoIndex]] },
-        })
-      );
+        });
+        myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+        return newMemoStorage;
+      });
     }
   };
   const willdoMoved = (offsetMoved: number, memoId: string) => {
@@ -71,12 +80,14 @@ function Board({ boardType }: IBoard) {
     );
     if (draggedMemoIndex < 0) return;
     if (offsetMoved < -100) {
-      setMemoStorage(
-        update(memoStorage, {
+      setMemoStorage(() => {
+        const newMemoStorage = update(memoStorage, {
           willdo: { $splice: [[draggedMemoIndex, 1]] },
           todo: { $push: [memoStorage.willdo[draggedMemoIndex]] },
-        })
-      );
+        });
+        myStorage.setItem("memoStorage", JSON.stringify(newMemoStorage));
+        return newMemoStorage;
+      });
     }
   };
 
@@ -95,6 +106,9 @@ function Board({ boardType }: IBoard) {
               ? todoMoved(info.offset.x, memo?.id!)
               : willdoMoved(info.offset.x, memo?.id!)
           }
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
         >
           {memo?.text}
         </Label>
