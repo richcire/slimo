@@ -24,6 +24,7 @@ const Label = styled(motion.li)`
   align-items: center;
   display: flex;
   justify-content: center;
+  overflow: scroll;
 `;
 
 const DeleteBtn = styled(motion.button)`
