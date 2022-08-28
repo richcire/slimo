@@ -150,9 +150,8 @@ function Board({ boardType }: IBoard) {
   return (
     <BoardContainer>
       {memoStorage[boardType].map((memo) => (
-        <AnimatePresence>
+        <AnimatePresence key={memo?.id}>
           <Label
-            key={memo?.id}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             onDragEnd={(event, info) =>

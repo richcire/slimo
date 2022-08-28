@@ -17,3 +17,8 @@ export const memoStorageState = atom<IMemoStorageState>({
     willdo: [{ id: "3", text: "tasks for tomorrow or later place here" }],
   },
 });
+
+export const isInfoTabOpenedState = atom({
+  key: "isInfoTabOpenedState",
+  default: false,
+});
