@@ -3,6 +3,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { useRecoilState } from "recoil";
 import { isInfoTabOpenedState } from "../atoms";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { useState } from "react";
 
 const Overlay = styled.section<{ isInfoTabOpened: boolean }>`
   position: fixed;
@@ -46,9 +47,33 @@ const ContenetContainer = styled.img`
   object-fit: contain;
 `;
 
+const contentImgSrc = [
+  "/img/first-content.png",
+  "/img/second-content.png",
+  "/img/third-content.png",
+  "/img/fourth-content.png",
+];
+
+const variatnts = {
+  enter: (direction: number) => {
+    return {
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    };
+  },
+};
 function InfoTab() {
   const [isInfoTabOpened, setIsInfoTabOpened] =
     useRecoilState(isInfoTabOpenedState);
+
+  const [[page, direction], setPage] = useState([0, 0]);
+
+  const paginate = (newDirection: number) => {
+    if (page === 0 || page === 3) {
+      return;
+    }
+    setPage([page + newDirection, newDirection]);
+  };
 
   return (
     <Overlay isInfoTabOpened={isInfoTabOpened}>
