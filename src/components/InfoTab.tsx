@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import { isInfoTabOpenedState } from "../atoms";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Overlay = styled.section<{ isInfoTabOpened: boolean }>`
   position: fixed;
@@ -25,6 +26,7 @@ const TabContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  overflow: hidden;
 `;
 
 const ExitBtn = styled.button`
@@ -34,17 +36,21 @@ const ExitBtn = styled.button`
   color: black;
   background-color: transparent;
   border: none;
+  z-index: 1;
 `;
 
 const ContentSwitchBtn = styled.button`
   background-color: transparent;
   border: none;
+  z-index: 1;
 `;
 
-const ContenetContainer = styled.img`
+const ContenetContainer = styled(motion.img)`
   height: 90%;
-  width: 90%;
+  width: 100%;
   object-fit: contain;
+  position: absolute;
+  z-index: 0;
 `;
 
 const contentImgSrc = [
@@ -57,8 +63,20 @@ const contentImgSrc = [
 const variatnts = {
   enter: (direction: number) => {
     return {
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
+      x: direction > 0 ? 2000 : -2000,
+      // opacity: 0,
+    };
+  },
+  center: {
+    // zIndex: 1,
+    x: 0,
+    // opacity: 1,
+  },
+  exit: (direction: number) => {
+    return {
+      // zIndex: 0,
+      x: direction < 0 ? 2000 : -2000,
+      // opacity: 0,
     };
   },
 };
@@ -69,11 +87,16 @@ function InfoTab() {
   const [[page, direction], setPage] = useState([0, 0]);
 
   const paginate = (newDirection: number) => {
-    if (page === 0 || page === 3) {
+    if (page === 0 && newDirection === -1) {
+      return;
+    }
+    if (page === 3 && newDirection === 1) {
       return;
     }
     setPage([page + newDirection, newDirection]);
   };
+
+  console.log(page);
 
   return (
     <Overlay isInfoTabOpened={isInfoTabOpened}>
@@ -81,12 +104,27 @@ function InfoTab() {
         <ExitBtn onClick={() => setIsInfoTabOpened(false)}>
           <AiOutlineClose size="2em" />
         </ExitBtn>
-        <ContentSwitchBtn>
-          <IoIosArrowBack size="2em" />
+        <ContentSwitchBtn onClick={() => paginate(-1)}>
+          <IoIosArrowBack size="3em" />
         </ContentSwitchBtn>
-        <ContenetContainer src="/img/fourth-content.png"></ContenetContainer>
-        <ContentSwitchBtn>
-          <IoIosArrowForward size="2em" />
+        <AnimatePresence initial={false} custom={direction}>
+          <ContenetContainer
+            key={page}
+            custom={direction}
+            variants={variatnts}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              type: "linear",
+              duration: 1,
+              // opacity: { duration: 0.2 },
+            }}
+            src={contentImgSrc[page]}
+          ></ContenetContainer>
+        </AnimatePresence>
+        <ContentSwitchBtn onClick={() => paginate(1)}>
+          <IoIosArrowForward size="3em" />
         </ContentSwitchBtn>
       </TabContainer>
     </Overlay>
