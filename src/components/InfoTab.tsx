@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai";
 import { useRecoilState } from "recoil";
 import { isInfoTabOpenedState } from "../atoms";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const Overlay = styled.section<{ isInfoTabOpened: boolean }>`
   position: fixed;
@@ -20,6 +21,9 @@ const TabContainer = styled.div`
   height: 80%;
   background-color: whitesmoke;
   border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const ExitBtn = styled.button`
@@ -29,6 +33,17 @@ const ExitBtn = styled.button`
   color: black;
   background-color: transparent;
   border: none;
+`;
+
+const ContentSwitchBtn = styled.button`
+  background-color: transparent;
+  border: none;
+`;
+
+const ContenetContainer = styled.img`
+  height: 90%;
+  width: 90%;
+  object-fit: contain;
 `;
 
 function InfoTab() {
@@ -41,6 +56,13 @@ function InfoTab() {
         <ExitBtn onClick={() => setIsInfoTabOpened(false)}>
           <AiOutlineClose size="2em" />
         </ExitBtn>
+        <ContentSwitchBtn>
+          <IoIosArrowBack size="2em" />
+        </ContentSwitchBtn>
+        <ContenetContainer src="/img/fourth-content.png"></ContenetContainer>
+        <ContentSwitchBtn>
+          <IoIosArrowForward size="2em" />
+        </ContentSwitchBtn>
       </TabContainer>
     </Overlay>
   );
