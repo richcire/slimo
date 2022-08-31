@@ -53,6 +53,25 @@ const ContenetContainer = styled(motion.img)`
   z-index: 0;
 `;
 
+const ContentIndicatorContainer = styled.div`
+  display: flex;
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100px;
+  gap: 10px;
+`;
+const ContentIndicator = styled.div<{ isShowing: boolean }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: ${(props) =>
+    props.isShowing ? "rgba(0,0,0,0.7)" : "rgba(0,0,0,0.4)"};
+`;
+
 const contentImgSrc = [
   "/img/first-content.png",
   "/img/second-content.png",
@@ -64,19 +83,14 @@ const variatnts = {
   enter: (direction: number) => {
     return {
       x: direction > 0 ? 2000 : -2000,
-      // opacity: 0,
     };
   },
   center: {
-    // zIndex: 1,
     x: 0,
-    // opacity: 1,
   },
   exit: (direction: number) => {
     return {
-      // zIndex: 0,
       x: direction < 0 ? 2000 : -2000,
-      // opacity: 0,
     };
   },
 };
@@ -85,18 +99,19 @@ function InfoTab() {
     useRecoilState(isInfoTabOpenedState);
 
   const [[page, direction], setPage] = useState([0, 0]);
+  const [leaving, setLeaving] = useState(false);
 
   const paginate = (newDirection: number) => {
+    if (leaving) return;
     if (page === 0 && newDirection === -1) {
       return;
     }
     if (page === 3 && newDirection === 1) {
       return;
     }
+    setLeaving(true);
     setPage([page + newDirection, newDirection]);
   };
-
-  console.log(page);
 
   return (
     <Overlay isInfoTabOpened={isInfoTabOpened}>
@@ -107,7 +122,11 @@ function InfoTab() {
         <ContentSwitchBtn onClick={() => paginate(-1)}>
           <IoIosArrowBack size="3em" />
         </ContentSwitchBtn>
-        <AnimatePresence initial={false} custom={direction}>
+        <AnimatePresence
+          initial={false}
+          custom={direction}
+          onExitComplete={() => setLeaving(false)}
+        >
           <ContenetContainer
             key={page}
             custom={direction}
@@ -126,6 +145,12 @@ function InfoTab() {
         <ContentSwitchBtn onClick={() => paginate(1)}>
           <IoIosArrowForward size="3em" />
         </ContentSwitchBtn>
+        <ContentIndicatorContainer>
+          <ContentIndicator isShowing={page == 0} />
+          <ContentIndicator isShowing={page == 1} />
+          <ContentIndicator isShowing={page == 2} />
+          <ContentIndicator isShowing={page == 3} />
+        </ContentIndicatorContainer>
       </TabContainer>
     </Overlay>
   );
