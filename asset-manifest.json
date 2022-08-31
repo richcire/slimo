@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/slimo/static/css/main.c5395a20.css",
-    "main.js": "/slimo/static/js/main.f33ab353.js",
+    "main.js": "/slimo/static/js/main.9e09c78c.js",
     "static/js/787.72d7110b.chunk.js": "/slimo/static/js/787.72d7110b.chunk.js",
     "index.html": "/slimo/index.html",
     "main.c5395a20.css.map": "/slimo/static/css/main.c5395a20.css.map",
-    "main.f33ab353.js.map": "/slimo/static/js/main.f33ab353.js.map",
+    "main.9e09c78c.js.map": "/slimo/static/js/main.9e09c78c.js.map",
     "787.72d7110b.chunk.js.map": "/slimo/static/js/787.72d7110b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c5395a20.css",
-    "static/js/main.f33ab353.js"
+    "static/js/main.9e09c78c.js"
   ]
 }
