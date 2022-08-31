@@ -2,8 +2,6 @@
 
 ## https://richcire.github.io/slimo/
 
----
-
 This is a simple app that you can save/delete your todo or memo through input bar and boards.
 
 Each board represents its elements status.
