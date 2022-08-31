@@ -73,10 +73,10 @@ const ContentIndicator = styled.div<{ isShowing: boolean }>`
 `;
 
 const contentImgSrc = [
-  "/img/first-content.png",
-  "/img/second-content.png",
-  "/img/third-content.png",
-  "/img/fourth-content.png",
+  "./img/first-content.png",
+  "./img/second-content.png",
+  "./img/third-content.png",
+  "./img/fourth-content.png",
 ];
 
 const variatnts = {
